@@ -1,11 +1,13 @@
 const fs = require('fs');
+const path = require('path');
 
 function findResourcePath(filename) {
   const candidates = [
     path.join(__dirname, '../../../', filename), // monorepo root from server/src/config
-    path.join(__dirname, '../../', filename),    // if server root is repository root
+    path.join(__dirname, '../../', filename),    // server directory root
     path.join(process.cwd(), filename),          // current working directory
-    path.join(process.cwd(), '..', filename)
+    path.join(process.cwd(), 'server', filename),// if running from repo root
+    path.join(process.cwd(), '..', filename)     // if running from server subdir
   ];
   for (const cand of candidates) {
     if (fs.existsSync(cand)) return cand;

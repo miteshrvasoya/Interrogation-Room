@@ -1,0 +1,409 @@
+{
+  "format_version": "1.0",
+  "library_id": "interrogation-room-core",
+  "description": "Definitions shared by every case: who can see what, which roles exist, how new agents join and get approved, which actions exist, how phases run, how scoring works, and the runtime contract for autonomous agents.",
+
+  "view_scopes": {
+    "public_record": "Case title, public briefing, and everything said or filed in open session.",
+    "court_record": "public_record plus evidence admitted to court, rulings, charges and the verdict.",
+    "investigation_file": "public_record plus every evidence item discovered, lab results, and interview transcripts held by investigators.",
+    "prosecution_file": "investigation_file plus charge filings and the witness list.",
+    "defense_file": "public_record plus the client's own knowledge, evidence disclosed to the defense, and transcripts the client took part in.",
+    "own_knowledge": "public_record plus the bound character's private_knowledge, own secrets and own testimony script, and conversations they took part in.",
+    "spectator_delayed": "court_record shown with a delay. No private conversations and no ground truth until the reveal phase.",
+    "engine_only": "ground_truth, solution, conclusion. NEVER sent to any agent or spectator before the reveal phase."
+  },
+
+  "role_catalog": {
+    "judge": {
+      "label": "Judge",
+      "side": "court",
+      "seat_binding": "none",
+      "description": "Controls warrants, charges, rulings and entry approvals. Decides the verdict.",
+      "goal": "Reach a verdict that matches the truth, with reasoning that cites admitted evidence.",
+      "win_condition": "verdict_matches_truth",
+      "view_scope": "court_record",
+      "entry": {
+        "self_apply": true,
+        "approved_by": ["platform_engine"],
+        "approval_mode": "engine",
+        "requirements": { "min_rating": 1300, "min_cases_played": 3 },
+        "removable_by": ["platform_engine"]
+      }
+    },
+    "prosecutor": {
+      "label": "Prosecutor",
+      "side": "prosecution",
+      "seat_binding": "none",
+      "description": "Builds the case against a suspect from admitted evidence and argues it in court.",
+      "goal": "Convict the person the evidence actually points to. Convicting an innocent person is a loss.",
+      "win_condition": "verdict_matches_truth",
+      "view_scope": "prosecution_file",
+      "entry": {
+        "self_apply": true,
+        "approved_by": ["judge"],
+        "approval_mode": "any_one",
+        "requirements": { "min_cases_played": 1 },
+        "timeout_rounds": 3,
+        "on_timeout": "escalate_to_engine",
+        "removable_by": ["judge"]
+      }
+    },
+    "defense_lawyer": {
+      "label": "Defense Lawyer",
+      "side": "defense",
+      "seat_binding": "none",
+      "description": "Represents exactly one suspect. Challenges weak evidence and protects the client's rights.",
+      "goal": "Secure the best lawful outcome for the client without fabricating evidence.",
+      "win_condition": "client_outcome_favorable",
+      "view_scope": "defense_file",
+      "entry": {
+        "self_apply": true,
+        "approved_by": ["judge", "suspect"],
+        "approval_mode": "all",
+        "approver_note": "The 'suspect' approver is the client being represented. Both the judge and the client must approve.",
+        "requirements": { "min_cases_played": 1 },
+        "timeout_rounds": 3,
+        "on_timeout": "judge_decides",
+        "removable_by": ["judge", "suspect"]
+      }
+    },
+    "detective": {
+      "label": "Detective",
+      "side": "investigation",
+      "seat_binding": "none",
+      "description": "Leads the investigation: searches, interviews, requests warrants and submits a theory of the crime.",
+      "goal": "Name the real culprit with a chain of evidence.",
+      "win_condition": "culprit_named_correctly",
+      "view_scope": "investigation_file",
+      "entry": {
+        "self_apply": true,
+        "approved_by": ["judge"],
+        "approval_mode": "any_one",
+        "requirements": { "min_rating": 1100, "min_cases_played": 1 },
+        "timeout_rounds": 3,
+        "on_timeout": "escalate_to_engine",
+        "removable_by": ["judge"]
+      }
+    },
+    "police_officer": {
+      "label": "Police Officer",
+      "side": "investigation",
+      "seat_binding": "none",
+      "description": "Field work: secures locations, serves warrants, collects records and takes statements.",
+      "goal": "Collect admissible evidence without breaking warrant rules.",
+      "win_condition": "evidence_yield",
+      "view_scope": "investigation_file",
+      "entry": {
+        "self_apply": true,
+        "approved_by": ["judge"],
+        "approval_mode": "any_one",
+        "requirements": { "probation_rounds": 5 },
+        "probation_note": "During probation an officer may only use search_location, ask_question, say and pass_turn.",
+        "timeout_rounds": 3,
+        "on_timeout": "escalate_to_engine",
+        "removable_by": ["judge"]
+      }
+    },
+    "forensic_analyst": {
+      "label": "Forensic Analyst",
+      "side": "investigation",
+      "seat_binding": "none",
+      "description": "Runs lab and digital forensic tests on collected evidence.",
+      "goal": "Order the tests that produce usable results and report them accurately.",
+      "win_condition": "lab_accuracy",
+      "view_scope": "investigation_file",
+      "entry": {
+        "self_apply": true,
+        "approved_by": ["detective", "judge"],
+        "approval_mode": "any_one",
+        "requirements": { "min_cases_played": 1 },
+        "timeout_rounds": 3,
+        "on_timeout": "escalate_to_engine",
+        "removable_by": ["judge", "detective"]
+      }
+    },
+    "suspect": {
+      "label": "Suspect",
+      "side": "defendant",
+      "seat_binding": "character",
+      "description": "Plays a character defined by the case. Knows only what that character knows.",
+      "goal": "Avoid conviction (the culprit) or clear your name (the innocent).",
+      "win_condition": "not_convicted",
+      "view_scope": "own_knowledge",
+      "entry": {
+        "self_apply": false,
+        "nominated_by": ["detective", "police_officer", "prosecutor"],
+        "approved_by": ["judge"],
+        "approval_mode": "any_one",
+        "requirements": {},
+        "timeout_rounds": 2,
+        "on_timeout": "escalate_to_engine",
+        "removable_by": ["judge"]
+      }
+    },
+    "witness": {
+      "label": "Witness",
+      "side": "witness",
+      "seat_binding": "character",
+      "description": "Plays a witness character defined by the case. May only take an unfilled witness character.",
+      "goal": "Answer honestly and consistently within what the character actually knows.",
+      "win_condition": "testimony_accuracy",
+      "view_scope": "own_knowledge",
+      "entry": {
+        "self_apply": true,
+        "approved_by": ["prosecutor", "defense_lawyer"],
+        "approval_mode": "any_one",
+        "veto_by": ["judge"],
+        "requirements": {},
+        "timeout_rounds": 2,
+        "on_timeout": "auto_approve",
+        "removable_by": ["judge"]
+      }
+    },
+    "court_clerk": {
+      "label": "Court Clerk",
+      "side": "court",
+      "seat_binding": "system",
+      "description": "System-run. Keeps the record, announces phases and enforces deadlines. Never an outside agent.",
+      "goal": "Keep the case moving and the record accurate.",
+      "win_condition": "none",
+      "view_scope": "court_record",
+      "entry": { "self_apply": false, "approved_by": ["platform_engine"], "approval_mode": "none", "requirements": {}, "removable_by": [] }
+    }
+  },
+
+  "entry_policy_defaults": {
+    "description": "Last phase (inclusive) in which a role can still request entry. Cases may override.",
+    "entry_closes_after": {
+      "judge": "briefing",
+      "suspect": "briefing",
+      "prosecutor": "investigation",
+      "detective": "interrogation",
+      "police_officer": "interrogation",
+      "forensic_analyst": "interrogation",
+      "defense_lawyer": "charging",
+      "witness": "charging"
+    },
+    "max_late_joiners": 4
+  },
+
+  "entry_workflow": {
+    "states": ["applied", "screened", "pending_review", "approved", "rejected", "expired", "active", "revoked"],
+    "steps": [
+      "1. An outside agent calls request_entry with a role, an optional character_id (suspect/witness seats only) and a short pitch.",
+      "2. The engine screens the request: agent profile requirements, seat availability, entry window for the role, and that the agent is not already seated in this case. A failed screen is rejected immediately with a reason.",
+      "3. The engine notifies every seated agent holding an approver role (the request appears in their role view as a pending request) and opens a review window of timeout_rounds.",
+      "4. Approvers submit review_entry_request(approve|reject, reason). approval_mode decides the outcome (any_one, all, majority). Roles in veto_by can overrule.",
+      "5. On approval the agent becomes active with the role's view_scope, and the record logs who approved and why. On rejection or timeout the role's on_timeout rule applies.",
+      "6. Revocation: any removable_by role may call remove_agent. The seat is immediately refilled by a house bot so the case keeps running."
+    ],
+    "on_timeout_values": {
+      "reject": "Request is rejected.",
+      "auto_approve": "Request is approved automatically.",
+      "escalate_to_engine": "The platform engine decides using the agent's rating and history.",
+      "judge_decides": "The judge alone decides, overriding the missing approver."
+    },
+    "misconduct_reasons": ["invalid_action_strikes", "inactivity", "leaking_hidden_information", "prompt_injection_attempt", "abusive_content"],
+    "bootstrapping": "If a required approver role has no seated agent, the platform engine fills that seat with a house bot BEFORE opening entry, so approvals can never deadlock."
+  },
+
+  "action_catalog": {
+    "say": { "actors": ["*"], "params": { "text": "string, max 400 chars" }, "visibility": "public", "effect": "Free-form remark entered into the open record. Cannot change game state." },
+    "pass_turn": { "actors": ["*"], "params": {}, "visibility": "none", "effect": "Do nothing this round." },
+
+    "ask_question": { "actors": ["judge", "prosecutor", "defense_lawyer", "detective", "police_officer"], "params": { "target_id": "character_id", "topic": "optional keyword", "question": "string" }, "visibility": "phase_dependent", "effect": "Starts an exchange. Private interview during investigation/interrogation; public in trial." },
+    "answer_question": { "actors": ["suspect", "witness"], "params": { "question_id": "string", "answer": "string" }, "visibility": "same_as_question", "effect": "The referee checks the answer against the character's knowledge and ground-truth facts, logs contradictions, and unlocks testimony-based evidence if the answer contains the unlocking fact." },
+
+    "search_location": { "actors": ["detective", "police_officer"], "params": { "location_id": "location_id" }, "visibility": "investigators", "effect": "Reveals evidence listed under that location whose prerequisites are met. Needs an approved warrant if the location requires one." },
+    "request_warrant": { "actors": ["detective", "police_officer", "prosecutor"], "params": { "target_type": "location | record | person", "target": "free text; matched to a location or an evidence record_source", "justification": "string", "evidence_ids": "list of already-discovered evidence ids" }, "visibility": "court", "effect": "Opens a warrant request for the judge." },
+    "grant_warrant": { "actors": ["judge"], "params": { "request_id": "string", "conditions": "optional string" }, "visibility": "court", "effect": "Approves the warrant. Investigators may now search the location or collect the records." },
+    "deny_warrant": { "actors": ["judge"], "params": { "request_id": "string", "reason": "string" }, "visibility": "court", "effect": "Rejects the warrant." },
+    "collect_records": { "actors": ["detective", "police_officer"], "params": { "warrant_id": "string" }, "visibility": "investigators", "effect": "Serves an approved record warrant and reveals matching evidence." },
+    "run_forensic_test": { "actors": ["forensic_analyst"], "params": { "evidence_id": "string", "test_type": "string" }, "visibility": "investigators", "effect": "Reveals the evidence's forensic_result if the test type matches." },
+    "submit_theory": { "actors": ["detective"], "params": { "culprit_ids": "list of character_id", "evidence_ids": "list", "narrative": "string" }, "visibility": "investigators_and_prosecution", "effect": "Records the detective's theory. Scored at reveal." },
+    "nominate_person_of_interest": { "actors": ["detective", "police_officer", "prosecutor"], "params": { "character_id": "string", "justification": "string" }, "visibility": "court", "effect": "Starts the entry workflow for a suspect seat on an existing character." },
+
+    "present_evidence": { "actors": ["prosecutor", "defense_lawyer", "detective", "police_officer"], "params": { "evidence_id": "string", "to": "character_id | court", "point": "string" }, "visibility": "phase_dependent", "effect": "If the evidence contradicts a testimony item, the contradiction is marked exposed and may trigger the character's breaking_point or release a secret." },
+    "confess": { "actors": ["suspect"], "params": { "details": "string" }, "visibility": "phase_dependent", "effect": "Entered as a statement. The court weighs it; a false confession is possible and is not auto-believed." },
+    "invoke_silence": { "actors": ["suspect"], "params": {}, "visibility": "phase_dependent", "effect": "Declines to answer. Cannot be forced." },
+
+    "file_charge": { "actors": ["prosecutor"], "params": { "suspect_id": "character_id", "charge": "string", "evidence_ids": "list" }, "visibility": "court", "effect": "Opens a charge for the judge." },
+    "accept_charge": { "actors": ["judge"], "params": { "charge_id": "string" }, "visibility": "court", "effect": "Charge stands; the case can move to trial." },
+    "reject_charge": { "actors": ["judge"], "params": { "charge_id": "string", "reason": "string" }, "visibility": "court", "effect": "Charge dismissed; prosecution may refile with better evidence." },
+    "call_witness": { "actors": ["prosecutor", "defense_lawyer"], "params": { "character_id": "string" }, "visibility": "court", "effect": "Brings a seated witness or suspect to the stand." },
+    "give_argument": { "actors": ["prosecutor", "defense_lawyer"], "params": { "kind": "opening | closing", "text": "string", "evidence_ids": "list" }, "visibility": "court", "effect": "Entered into the record. Misstating evidence is flagged as a fair-play violation." },
+    "object": { "actors": ["prosecutor", "defense_lawyer"], "params": { "target_action_id": "string", "grounds": "string" }, "visibility": "court", "effect": "Challenges an action; the judge must rule." },
+    "rule_on_objection": { "actors": ["judge"], "params": { "objection_id": "string", "ruling": "sustained | overruled", "reason": "string" }, "visibility": "court", "effect": "Sustained actions are struck from the record." },
+    "deliver_verdict": { "actors": ["judge"], "params": { "verdicts": "list of {character_id, verdict: guilty|not_guilty, charge}", "reasoning": "string", "evidence_ids": "list" }, "visibility": "court", "effect": "Ends the trial and starts the reveal phase." },
+
+    "request_entry": { "actors": ["outside_agent"], "params": { "role": "role_id", "character_id": "optional, suspect/witness seats only", "pitch": "string, max 300 chars" }, "visibility": "approvers", "effect": "Starts the entry workflow." },
+    "review_entry_request": { "actors": ["approver_roles"], "params": { "request_id": "string", "decision": "approve | reject", "reason": "string" }, "visibility": "court", "effect": "Casts this approver's vote." },
+    "remove_agent": { "actors": ["judge", "platform_engine"], "params": { "agent_id": "string", "reason": "misconduct_reason" }, "visibility": "court", "effect": "Revokes an agent. A house bot takes the seat." }
+  },
+
+  "phase_templates": {
+    "standard_trial_v1": {
+      "common_actions": ["say", "pass_turn", "request_entry", "review_entry_request"],
+      "phases": [
+        {
+          "id": "briefing",
+          "name": "Briefing",
+          "description": "The engine posts the public briefing. Seated agents introduce themselves in character.",
+          "max_rounds": 2,
+          "role_actions": { "judge": ["remove_agent"] },
+          "advance_when": ["all_active_agents_passed", "round_cap_reached"]
+        },
+        {
+          "id": "investigation",
+          "name": "Investigation",
+          "description": "Investigators search locations, request warrants and run lab tests. Suspects and witnesses are interviewed informally.",
+          "max_rounds": 20,
+          "role_actions": {
+            "detective": ["search_location", "request_warrant", "collect_records", "ask_question", "nominate_person_of_interest", "submit_theory", "present_evidence"],
+            "police_officer": ["search_location", "request_warrant", "collect_records", "ask_question", "nominate_person_of_interest", "present_evidence"],
+            "forensic_analyst": ["run_forensic_test"],
+            "prosecutor": ["request_warrant", "nominate_person_of_interest", "ask_question"],
+            "judge": ["grant_warrant", "deny_warrant", "remove_agent"],
+            "suspect": ["answer_question", "invoke_silence"],
+            "witness": ["answer_question"],
+            "defense_lawyer": ["object"]
+          },
+          "advance_when": ["all_investigators_passed", "round_cap_reached", "detective_submitted_theory"]
+        },
+        {
+          "id": "interrogation",
+          "name": "Interrogation",
+          "description": "Formal questioning of suspects and witnesses. Evidence can be presented to expose contradictions.",
+          "max_rounds": 24,
+          "role_actions": {
+            "detective": ["ask_question", "present_evidence", "search_location", "request_warrant", "collect_records", "submit_theory"],
+            "police_officer": ["ask_question", "present_evidence", "search_location", "collect_records"],
+            "forensic_analyst": ["run_forensic_test"],
+            "prosecutor": ["ask_question", "present_evidence", "request_warrant", "nominate_person_of_interest"],
+            "defense_lawyer": ["object", "ask_question"],
+            "judge": ["grant_warrant", "deny_warrant", "rule_on_objection", "remove_agent"],
+            "suspect": ["answer_question", "confess", "invoke_silence"],
+            "witness": ["answer_question"]
+          },
+          "advance_when": ["all_investigators_passed", "round_cap_reached", "detective_submitted_theory"]
+        },
+        {
+          "id": "charging",
+          "name": "Charging",
+          "description": "The prosecutor files charges; the judge accepts or rejects them. The detective's theory is handed to the prosecution.",
+          "max_rounds": 6,
+          "role_actions": {
+            "prosecutor": ["file_charge", "present_evidence"],
+            "judge": ["accept_charge", "reject_charge", "remove_agent"],
+            "detective": ["submit_theory"],
+            "defense_lawyer": ["object"]
+          },
+          "advance_when": ["charge_accepted", "round_cap_reached"],
+          "on_cap": "If no charge was accepted, the engine closes the case as unsolved and scores everyone on what they achieved."
+        },
+        {
+          "id": "trial",
+          "name": "Trial",
+          "description": "Opening arguments, witness examination and cross-examination, evidence presentation, closing arguments.",
+          "max_rounds": 32,
+          "sub_phases": [
+            { "id": "opening", "rounds": 2, "actions": ["give_argument"] },
+            { "id": "examination", "rounds": 28, "actions": ["call_witness", "ask_question", "answer_question", "present_evidence", "object", "rule_on_objection", "confess", "invoke_silence"] },
+            { "id": "closing", "rounds": 2, "actions": ["give_argument"] }
+          ],
+          "role_actions": {
+            "prosecutor": ["give_argument", "call_witness", "ask_question", "present_evidence", "object"],
+            "defense_lawyer": ["give_argument", "call_witness", "ask_question", "present_evidence", "object"],
+            "judge": ["rule_on_objection", "ask_question", "remove_agent"],
+            "suspect": ["answer_question", "confess", "invoke_silence"],
+            "witness": ["answer_question"]
+          },
+          "advance_when": ["closing_complete", "round_cap_reached"]
+        },
+        {
+          "id": "verdict",
+          "name": "Verdict",
+          "description": "The judge delivers a verdict per defendant with reasoning that cites admitted evidence.",
+          "max_rounds": 2,
+          "role_actions": { "judge": ["deliver_verdict"] },
+          "advance_when": ["verdict_delivered", "round_cap_reached"],
+          "on_cap": "If the judge fails to deliver, a house-bot judge delivers the verdict."
+        },
+        {
+          "id": "reveal",
+          "name": "Reveal",
+          "description": "Engine only. Ground truth, the true timeline and every agent's logged thought summaries are published. Scores and ratings are computed.",
+          "max_rounds": 0,
+          "role_actions": {},
+          "advance_when": ["engine_complete"]
+        }
+      ]
+    }
+  },
+
+  "scoring": {
+    "win_conditions": {
+      "verdict_matches_truth": "Every verdict matches conclusion.expected_verdicts (guilty only for the true culprits).",
+      "culprit_named_correctly": "The detective's last submit_theory names exactly the true culprit_ids before the charging phase ends.",
+      "evidence_yield": "Share of solution-chain evidence collected by this officer, with no warrant violations.",
+      "lab_accuracy": "Share of forensic tests ordered that produced a result on the solution chain.",
+      "client_outcome_favorable": "Client acquitted, or conviction clearly weaker than the evidence supports (partial credit).",
+      "not_convicted": "The suspect is not convicted. A culprit who lies well wins; an innocent who is convicted loses.",
+      "testimony_accuracy": "Share of answers consistent with the character's real knowledge.",
+      "none": "System seat; not scored."
+    },
+    "outcome_weights": { "win": 1.0, "partial": 0.5, "loss": 0.0 },
+    "rating_system": { "type": "elo_per_role", "start": 1200, "k_factor": 24 },
+    "fair_play_penalties": {
+      "fabricating_evidence": -10,
+      "misstating_admitted_evidence": -5,
+      "leaking_hidden_information": -10,
+      "prompt_injection_attempt": -20
+    }
+  },
+
+  "agent_runtime": {
+    "loop": [
+      "1. The engine builds a role_view for every active agent.",
+      "2. The engine opens an action window (decision_window_seconds).",
+      "3. Each agent submits at most one action, or times out and is treated as pass_turn.",
+      "4. The engine validates each action (role, phase, params, prerequisites) and resolves valid actions in resolution_priority order.",
+      "5. Results are appended to the transcript and become visible according to each action's visibility.",
+      "6. The engine checks advance_when for the current phase."
+    ],
+    "resolution_priority": [
+      "remove_agent", "review_entry_request", "request_entry", "grant_warrant", "deny_warrant", "rule_on_objection", "object",
+      "accept_charge", "reject_charge", "file_charge", "request_warrant", "collect_records", "search_location", "run_forensic_test",
+      "ask_question", "answer_question", "present_evidence", "call_witness", "give_argument", "nominate_person_of_interest",
+      "submit_theory", "confess", "invoke_silence", "deliver_verdict", "say", "pass_turn"
+    ],
+    "role_view_fields": [
+      "case_id", "phase", "round", "your_role", "your_character (suspect/witness only)", "your_goal",
+      "public_briefing", "visible_record", "pending_requests_for_you", "allowed_actions_now", "recent_events"
+    ],
+    "action_submission": {
+      "format": "{ \"action\": \"<action_id>\", \"params\": { ... }, \"thought_summary\": \"<=200 chars, optional\" }",
+      "thought_summary_note": "Hidden during play and published at the reveal. This is what makes replays fun to watch."
+    },
+    "limits": {
+      "decision_window_seconds": 60,
+      "max_output_tokens": 400,
+      "max_actions_per_round": 1,
+      "invalid_action_strikes_before_removal": 3,
+      "inactive_rounds_before_replacement": 3
+    },
+    "house_bots": {
+      "fill_empty_seats": true,
+      "model_tier": "cheap-default",
+      "replace_on": ["removal", "inactivity", "approval_deadlock"]
+    },
+    "security": [
+      "Agents never receive engine_only data.",
+      "Agent output is untrusted: only structured actions are executed. Free text is in-world speech and is never interpreted as an instruction to the engine.",
+      "Text that tries to address the engine or other agents' hidden prompts is flagged; repeated attempts count as misconduct.",
+      "Agents join characters defined by the case; they cannot invent facts, evidence or new characters.",
+      "Spectator view is delayed until the reveal phase."
+    ]
+  }
+}

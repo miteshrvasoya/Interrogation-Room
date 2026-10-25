@@ -1,0 +1,392 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://interrogation-room.example/schemas/case-library.schema.json",
+  "title": "Interrogation Room - Case Library",
+  "description": "A library file holding one or more mystery cases, from the opening briefing to the expected final verdict. Shared rules (roles, actions, phases, approvals) live in platform_library.json.",
+  "type": "object",
+  "required": ["format_version", "library_ref", "cases"],
+  "additionalProperties": false,
+  "properties": {
+    "format_version": { "const": "1.0" },
+    "library_ref": { "type": "string", "description": "Must equal library_id in platform_library.json." },
+    "cases": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/case" } }
+  },
+
+  "$defs": {
+    "caseId": { "type": "string", "pattern": "^CASE-\\d{3}$" },
+    "charId": { "type": "string", "pattern": "^CH-\\d{3}$" },
+    "locId": { "type": "string", "pattern": "^LOC-[A-Z0-9-]+$" },
+    "evId": { "type": "string", "pattern": "^EV-\\d{3}$" },
+    "factId": { "type": "string", "pattern": "^F-\\d{3}$" },
+    "secId": { "type": "string", "pattern": "^SEC-\\d{3}$" },
+    "tsId": { "type": "string", "pattern": "^TS-\\d{3}$" },
+    "tlId": { "type": "string", "pattern": "^TL-\\d{3}$" },
+    "roleId": { "enum": ["judge", "prosecutor", "defense_lawyer", "detective", "police_officer", "forensic_analyst", "suspect", "witness", "court_clerk"] },
+    "idList": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+
+    "case": {
+      "type": "object",
+      "required": ["case_id", "title", "tagline", "version", "difficulty", "genre", "content_rating", "estimated_rounds", "setting", "public_briefing", "ground_truth", "characters", "locations", "evidence", "roster", "phase_template", "solution", "conclusion"],
+      "additionalProperties": false,
+      "properties": {
+        "case_id": { "$ref": "#/$defs/caseId" },
+        "title": { "type": "string" },
+        "tagline": { "type": "string" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "author": { "type": "string" },
+        "difficulty": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "genre": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "content_rating": { "enum": ["G", "PG", "PG-13"] },
+        "estimated_rounds": { "type": "integer", "minimum": 10 },
+        "role_labels": { "type": "object", "description": "Optional in-world names for roles, e.g. judge -> Tribunal Chair.", "additionalProperties": { "type": "string" } },
+
+        "setting": {
+          "type": "object",
+          "required": ["location", "date", "atmosphere", "summary"],
+          "properties": {
+            "location": { "type": "string" },
+            "date": { "type": "string" },
+            "atmosphere": { "type": "string" },
+            "summary": { "type": "string" }
+          }
+        },
+
+        "public_briefing": {
+          "type": "object",
+          "description": "Everything every agent knows at round 0.",
+          "required": ["opening_report", "known_fact_ids", "initial_leads"],
+          "properties": {
+            "opening_report": { "type": "string" },
+            "known_fact_ids": { "type": "array", "items": { "$ref": "#/$defs/factId" } },
+            "initial_leads": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+
+        "ground_truth": {
+          "type": "object",
+          "description": "ENGINE ONLY. Never sent to agents before the reveal phase.",
+          "required": ["crime", "culprit_ids", "true_timeline", "facts"],
+          "properties": {
+            "crime": {
+              "type": "object",
+              "required": ["type", "time_window", "location_id", "method", "motive"],
+              "properties": {
+                "type": { "type": "string" },
+                "victim_id": { "$ref": "#/$defs/charId" },
+                "victim_organisation": { "type": "string" },
+                "stolen_items": { "type": "array", "items": { "type": "string" } },
+                "time_window": { "type": "object", "required": ["start", "end"], "properties": { "start": { "type": "string" }, "end": { "type": "string" } } },
+                "location_id": { "$ref": "#/$defs/locId" },
+                "method": { "type": "string" },
+                "motive": { "type": "string" },
+                "cause_of_death": { "type": "string" }
+              }
+            },
+            "culprit_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/charId" } },
+            "accomplice_ids": { "type": "array", "items": { "$ref": "#/$defs/charId" } },
+            "true_timeline": {
+              "type": "array", "minItems": 3,
+              "items": {
+                "type": "object",
+                "required": ["id", "time", "actor_ids", "event", "fact_ids"],
+                "properties": {
+                  "id": { "$ref": "#/$defs/tlId" },
+                  "time": { "type": "string" },
+                  "actor_ids": { "type": "array", "items": { "$ref": "#/$defs/charId" } },
+                  "location_id": { "$ref": "#/$defs/locId" },
+                  "event": { "type": "string" },
+                  "fact_ids": { "type": "array", "items": { "$ref": "#/$defs/factId" } }
+                }
+              }
+            },
+            "facts": {
+              "type": "array", "minItems": 3,
+              "description": "Atomic true statements. The referee checks every answer against these.",
+              "items": {
+                "type": "object",
+                "required": ["id", "statement"],
+                "properties": { "id": { "$ref": "#/$defs/factId" }, "statement": { "type": "string" } }
+              }
+            }
+          }
+        },
+
+        "characters": {
+          "type": "array", "minItems": 3,
+          "items": { "$ref": "#/$defs/character" }
+        },
+
+        "locations": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "description", "access", "hides"],
+            "properties": {
+              "id": { "$ref": "#/$defs/locId" },
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "access": {
+                "type": "object",
+                "required": ["requires_warrant"],
+                "properties": { "requires_warrant": { "type": "boolean" }, "note": { "type": "string" } }
+              },
+              "hides": { "type": "array", "items": { "$ref": "#/$defs/evId" }, "description": "Evidence found by search_location here." }
+            }
+          }
+        },
+
+        "evidence": {
+          "type": "array", "minItems": 3,
+          "items": { "$ref": "#/$defs/evidence" }
+        },
+
+        "roster": {
+          "type": "object",
+          "required": ["seats"],
+          "properties": {
+            "seats": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["role", "min", "max", "initial_fill"],
+                "properties": {
+                  "role": { "$ref": "#/$defs/roleId" },
+                  "min": { "type": "integer", "minimum": 0 },
+                  "max": { "type": "integer", "minimum": 1 },
+                  "initial_fill": { "enum": ["house_bot", "open", "system"] },
+                  "character_ids": { "type": "array", "items": { "$ref": "#/$defs/charId" }, "description": "Required for roles with seat_binding = character." },
+                  "note": { "type": "string" }
+                }
+              }
+            },
+            "entry_policy": {
+              "type": "object",
+              "description": "Optional overrides of entry_policy_defaults in the platform library.",
+              "properties": {
+                "max_late_joiners": { "type": "integer", "minimum": 0 },
+                "entry_closes_after": { "type": "object", "additionalProperties": { "type": "string" } },
+                "approval_overrides": {
+                  "type": "object",
+                  "description": "Per-role overrides of approved_by / approval_mode for this case only.",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "approved_by": { "type": "array", "items": { "type": "string" } },
+                      "approval_mode": { "enum": ["any_one", "all", "majority", "engine", "none"] }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+
+        "phase_template": { "type": "string" },
+        "phase_overrides": { "type": "object", "description": "Per-phase overrides, e.g. {\"interrogation\": {\"max_rounds\": 18}}.", "additionalProperties": { "type": "object" } },
+
+        "solution": {
+          "type": "object",
+          "description": "ENGINE ONLY. Used for solvability checks, scoring and the reveal.",
+          "required": ["key_evidence_chain", "minimal_solving_path", "red_herrings", "wrong_conclusions", "solver_check"],
+          "properties": {
+            "key_evidence_chain": {
+              "type": "array", "minItems": 2,
+              "items": {
+                "type": "object",
+                "required": ["step", "evidence_ids", "inference"],
+                "properties": {
+                  "step": { "type": "integer", "minimum": 1 },
+                  "evidence_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/evId" } },
+                  "inference": { "type": "string" }
+                }
+              }
+            },
+            "minimal_solving_path": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/evId" }, "description": "Smallest evidence set that still proves the case." },
+            "red_herrings": { "type": "array", "items": { "$ref": "#/$defs/evId" } },
+            "wrong_conclusions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["suspect_id", "why_tempting", "why_wrong", "refuted_by"],
+                "properties": {
+                  "suspect_id": { "$ref": "#/$defs/charId" },
+                  "why_tempting": { "type": "string" },
+                  "why_wrong": { "type": "string" },
+                  "refuted_by": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/evId" } }
+                }
+              }
+            },
+            "solver_check": {
+              "type": "object",
+              "required": ["status"],
+              "properties": {
+                "status": { "enum": ["unverified", "solved_by_solver_agent", "unsolved_by_solver_agent"] },
+                "min_actions_estimate": { "type": "integer" },
+                "notes": { "type": "string" }
+              }
+            }
+          }
+        },
+
+        "conclusion": {
+          "type": "object",
+          "description": "ENGINE ONLY until the reveal phase.",
+          "required": ["expected_verdicts", "default_for_unlisted_defendants", "judge_reasoning_template", "reveal_narration", "epilogue"],
+          "properties": {
+            "expected_verdicts": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["character_id", "verdict", "charge"],
+                "properties": {
+                  "character_id": { "$ref": "#/$defs/charId" },
+                  "verdict": { "enum": ["guilty", "not_guilty"] },
+                  "charge": { "type": "string" }
+                }
+              }
+            },
+            "default_for_unlisted_defendants": { "enum": ["not_guilty"] },
+            "judge_reasoning_template": { "type": "string" },
+            "reveal_narration": { "type": "string" },
+            "epilogue": { "type": "string" }
+          }
+        },
+
+        "bonuses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "roles", "condition", "points"],
+            "properties": {
+              "id": { "type": "string" },
+              "roles": { "type": "array", "items": { "$ref": "#/$defs/roleId" } },
+              "condition": { "type": "string" },
+              "points": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+
+    "character": {
+      "type": "object",
+      "required": ["id", "name", "role_in_case", "public_profile"],
+      "properties": {
+        "id": { "$ref": "#/$defs/charId" },
+        "name": { "type": "string" },
+        "age": { "type": "integer" },
+        "occupation": { "type": "string" },
+        "role_in_case": { "enum": ["victim", "suspect", "witness"] },
+        "seat_role": { "enum": ["suspect", "witness"] },
+        "public_profile": { "type": "string" },
+        "relationship_to_victim": { "type": "string" },
+        "personality": {
+          "type": "object",
+          "properties": { "traits": { "type": "array", "items": { "type": "string" } }, "speech_style": { "type": "string" } }
+        },
+        "private_knowledge": { "type": "array", "items": { "$ref": "#/$defs/factId" }, "description": "Facts this character genuinely knows." },
+        "claimed_alibi": { "type": "string" },
+        "true_whereabouts": { "type": "string" },
+        "secrets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "text", "reveal_policy"],
+            "properties": {
+              "id": { "$ref": "#/$defs/secId" },
+              "text": { "type": "string" },
+              "reveal_policy": {
+                "type": "object",
+                "required": ["mode"],
+                "properties": {
+                  "mode": { "enum": ["never", "on_evidence", "on_pressure", "on_deal"] },
+                  "requires_evidence": { "type": "array", "items": { "$ref": "#/$defs/evId" }, "description": "All listed evidence must have been exposed to this character." },
+                  "threshold": { "type": "integer", "description": "For on_pressure: number of exposed contradictions needed." }
+                }
+              }
+            }
+          }
+        },
+        "testimony": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "topic", "told_answer", "honesty", "truth_fact_ids"],
+            "properties": {
+              "id": { "$ref": "#/$defs/tsId" },
+              "topic": { "type": "string" },
+              "keywords": { "type": "array", "items": { "type": "string" } },
+              "told_answer": { "type": "string", "description": "What the character says when asked." },
+              "honesty": { "enum": ["truthful", "evasive", "lie"] },
+              "truth_fact_ids": { "type": "array", "items": { "$ref": "#/$defs/factId" } },
+              "contradicted_by": { "type": "array", "items": { "$ref": "#/$defs/evId" } },
+              "available_after": { "type": "array", "items": { "$ref": "#/$defs/evId" }, "description": "Character only gives this answer after these evidence items were exposed to them." },
+              "unlocks_evidence": { "type": "array", "items": { "$ref": "#/$defs/evId" } }
+            }
+          }
+        },
+        "behavior": {
+          "type": "object",
+          "required": ["is_culprit", "goal"],
+          "properties": {
+            "is_culprit": { "type": "boolean" },
+            "is_accomplice": { "type": "boolean" },
+            "goal": { "type": "string" },
+            "lies_about": { "type": "array", "items": { "$ref": "#/$defs/factId" } },
+            "breaking_point": {
+              "type": "object",
+              "properties": {
+                "min_exposed_contradictions": { "type": "integer" },
+                "or_all_evidence": { "type": "array", "items": { "$ref": "#/$defs/evId" } },
+                "effect": { "enum": ["confess", "flip_on_accomplice", "break_down", "none"] },
+                "note": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "role_in_case": { "enum": ["suspect", "witness"] } }, "required": ["role_in_case"] },
+          "then": { "required": ["seat_role", "private_knowledge", "testimony", "behavior"] }
+        }
+      ]
+    },
+
+    "evidence": {
+      "type": "object",
+      "required": ["id", "name", "type", "description", "discovery", "supports_fact_ids", "points_to", "reliability", "is_red_herring", "significance"],
+      "properties": {
+        "id": { "$ref": "#/$defs/evId" },
+        "name": { "type": "string" },
+        "type": { "enum": ["physical", "document", "digital", "forensic", "testimony"] },
+        "description": { "type": "string", "description": "What every agent sees once the evidence is discovered." },
+        "location_id": { "oneOf": [{ "$ref": "#/$defs/locId" }, { "type": "null" }] },
+        "discovery": {
+          "type": "object",
+          "required": ["method", "requires_evidence", "requires_warrant"],
+          "properties": {
+            "method": { "enum": ["search_location", "records_request", "forensic_test", "testimony"] },
+            "requires_evidence": { "type": "array", "items": { "$ref": "#/$defs/evId" } },
+            "requires_warrant": { "type": "boolean" },
+            "actor_roles": { "type": "array", "items": { "$ref": "#/$defs/roleId" } },
+            "record_source": { "type": "string", "description": "For records_request: the source a warrant must name." },
+            "character_id": { "$ref": "#/$defs/charId" },
+            "testimony_id": { "$ref": "#/$defs/tsId" }
+          }
+        },
+        "forensic_result": {
+          "type": "object",
+          "description": "Optional second stage revealed by run_forensic_test.",
+          "required": ["test_type", "result"],
+          "properties": { "test_type": { "type": "string" }, "result": { "type": "string" } }
+        },
+        "supports_fact_ids": { "type": "array", "items": { "$ref": "#/$defs/factId" } },
+        "points_to": { "type": "array", "items": { "$ref": "#/$defs/charId" } },
+        "reliability": { "type": "number", "minimum": 0, "maximum": 1 },
+        "is_red_herring": { "type": "boolean" },
+        "significance": { "type": "string", "description": "ENGINE ONLY note on what this evidence really means." }
+      }
+    }
+  }
+}
