@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Share2,
@@ -13,6 +13,7 @@ import {
   Twitter
 } from 'lucide-react';
 import Image from 'next/image';
+import { analytics } from '@/lib/analytics';
 
 interface SocialShareModalProps {
   isOpen: boolean;
@@ -32,6 +33,12 @@ export default function SocialShareModal({
   caseId
 }: SocialShareModalProps) {
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      analytics.trackShareModalOpened(caseId);
+    }
+  }, [isOpen, caseId]);
 
   if (!isOpen) return null;
 
@@ -55,6 +62,7 @@ export default function SocialShareModal({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(currentUrl);
+      analytics.trackSocialShare('copy_link', caseId);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -164,6 +172,7 @@ export default function SocialShareModal({
                 href={twitterShareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => analytics.trackSocialShare('twitter', caseId)}
                 className="py-2.5 px-3 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 font-bold text-xs flex items-center justify-center gap-2 transition hover:scale-[1.02]"
               >
                 <Twitter className="w-3.5 h-3.5" />
@@ -174,6 +183,7 @@ export default function SocialShareModal({
                 href={redditShareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => analytics.trackSocialShare('reddit', caseId)}
                 className="py-2.5 px-3 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 font-bold text-xs flex items-center justify-center gap-2 transition hover:scale-[1.02]"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
@@ -184,6 +194,7 @@ export default function SocialShareModal({
                 href={linkedinShareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => analytics.trackSocialShare('linkedin', caseId)}
                 className="py-2.5 px-3 rounded-xl bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/40 text-indigo-300 font-bold text-xs flex items-center justify-center gap-2 transition hover:scale-[1.02]"
               >
                 <ExternalLink className="w-3.5 h-3.5" />

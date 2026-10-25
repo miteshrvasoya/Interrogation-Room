@@ -20,6 +20,7 @@ import {
   Search,
   BookOpen
 } from 'lucide-react';
+import { analytics } from '@/lib/analytics';
 
 interface CaseBuilderModalProps {
   isOpen: boolean;
@@ -162,6 +163,12 @@ export default function CaseBuilderModal({ isOpen, onClose }: CaseBuilderModalPr
       if (!res.ok || !data.success) {
         throw new Error(data.error || data.details?.join('; ') || 'Failed to launch battle');
       }
+
+      analytics.trackCaseCreated(
+        data.sessionId,
+        data.case?.title || title || 'Custom Battle Case',
+        activeTab
+      );
 
       // Close modal and redirect directly into live case battle!
       onClose();

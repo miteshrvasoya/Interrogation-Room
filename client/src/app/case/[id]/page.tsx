@@ -16,6 +16,7 @@ import SocialShareModal from '@/components/ui/SocialShareModal';
 import { Zap } from 'lucide-react';
 import { sounds } from '@/lib/audio';
 import { getSocketUrl } from '@/lib/socket';
+import { analytics } from '@/lib/analytics';
 
 export default function CaseRoomPage() {
   const params = useParams();
@@ -75,6 +76,7 @@ export default function CaseRoomPage() {
         const data = await res.json();
         if (data.success) {
           setSessionData(data.session);
+          analytics.trackCaseViewed(sessionId, data.session?.title);
           if (data.session.liveScores) setLiveScores(data.session.liveScores);
           if (data.session.refereeContradictions) setRefereeContradictions(data.session.refereeContradictions);
           if (data.session.refereeObservations) setRefereeObservations(data.session.refereeObservations);
@@ -135,6 +137,7 @@ export default function CaseRoomPage() {
 
     socket.on('case_finished', ({ reveal }: any) => {
       sounds.playGavel();
+      analytics.trackRevealViewed(sessionId, reveal?.trueCulprit);
       setTimeout(() => {
         setIsRevealOpen(true);
       }, 1000);
@@ -148,6 +151,7 @@ export default function CaseRoomPage() {
 
   // Handle spectator reactions
   const handleSendReaction = (type: string) => {
+    analytics.trackReactionSent(type, sessionId);
     if (socketRef.current) {
       socketRef.current.emit('send_reaction', {
         sessionId,
@@ -166,6 +170,8 @@ export default function CaseRoomPage() {
 
   // Handle confidence bet
   const handlePlaceBet = async (suspectId: string, points: number) => {
+    const suspectChar = sessionData?.characters?.find((c: any) => c.id === suspectId);
+    analytics.trackBetPlaced(suspectId, suspectChar?.name || suspectId, points, sessionId);
     const res = await fetch(`/api/sessions/${sessionId}/bet`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -304,13 +310,18 @@ export default function CaseRoomPage() {
         heat={sessionData.heat || 75}
         odds={sessionData.odds || {}}
         freeLook={freeLook}
-        onToggleFreeLook={() => setFreeLook(!freeLook)}
+        onToggleFreeLook={() => {
+          analytics.trackFreeLookToggled(!freeLook, sessionId);
+          setFreeLook(!freeLook);
+        }}
         settingMode={settingMode}
         onToggleSettingMode={() => {
+          const nextMode = settingMode === 'evidence_board' ? 'auto' : 'evidence_board';
+          analytics.trackSettingModeToggled(nextMode, sessionId);
           if (settingMode !== 'evidence_board') {
             setFreeLook(false);
           }
-          setSettingMode(settingMode === 'evidence_board' ? 'auto' : 'evidence_board');
+          setSettingMode(nextMode);
         }}
         onOpenTranscript={() => setIsTranscriptOpen(true)}
         onOpenBetModal={() => setIsBetModalOpen(true)}
@@ -325,7 +336,9 @@ export default function CaseRoomPage() {
         onToggleReferee={() => setIsRefereeOpen(!isRefereeOpen)}
         isRefereeOpen={isRefereeOpen}
         onStartReplay={() => {
-          setIsReplayActive(!isReplayActive);
+          const nextActive = !isReplayActive;
+          analytics.trackReplayAction(nextActive ? 'open' : 'close', sessionId);
+          setIsReplayActive(nextActive);
           if (!isReplayActive) setReplayIndex(0);
         }}
         isReplayActive={isReplayActive}

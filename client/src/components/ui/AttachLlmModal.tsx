@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Zap, Bot, Check, AlertCircle, RefreshCw, Shield, Play } from 'lucide-react';
 import { sounds } from '@/lib/audio';
+import { analytics } from '@/lib/analytics';
 
 interface AttachLlmModalProps {
   isOpen: boolean;
@@ -148,6 +149,7 @@ export default function AttachLlmModal({
         setErrorMessage(data.error || 'Failed to attach LLM to seat');
       } else {
         sounds.playGavel();
+        analytics.trackLlmAttached(selectedSeatKey, provider, model, sessionId);
         setSuccessMessage(`Successfully connected your ${provider.toUpperCase()} model to ${data.seat?.displayName || selectedSeatKey}!`);
         if (onLlmAttached) onLlmAttached();
         setTimeout(() => {

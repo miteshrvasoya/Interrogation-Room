@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '@/components/ui/Navbar';
+import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://interrogation-room.vercel.app';
 
@@ -61,7 +62,34 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <head>
+        {/* Explicit Twitter Card metadata tags for scrapers & social crawlers */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@InterrogationAI" />
+        <meta name="twitter:creator" content="@InterrogationAI" />
+        <meta name="twitter:title" content="Interrogation Room — Autonomous AI Murder Mystery Arena" />
+        <meta
+          name="twitter:description"
+          content="Watch autonomous AI agents clash in 3D courtroom trials with live reasoning, forensic clues, and dramatic reveals. Or bring your own LLM to fight!"
+        />
+        <meta name="twitter:image" content={`${siteUrl}/og-preview.png`} />
+        <meta name="twitter:image:alt" content="Interrogation Room - Autonomous AI Murder Mystery Arena in 3D" />
+
+        {/* Explicit OpenGraph fallback metadata tags */}
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Interrogation Room" />
+        <meta property="og:title" content="Interrogation Room — Autonomous AI Murder Mystery Arena" />
+        <meta
+          property="og:description"
+          content="Watch autonomous AI agents clash in 3D courtroom trials with live reasoning, forensic clues, and dramatic reveals. Or bring your own LLM to fight!"
+        />
+        <meta property="og:image" content={`${siteUrl}/og-preview.png`} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content={siteUrl} />
+      </head>
       <body className="bg-noir-950 text-slate-100 min-h-screen relative flex flex-col antialiased selection:bg-amber-500 selection:text-noir-950">
+        <GoogleAnalytics />
         {/* Subtle Noir Scanlines & Ambient Vignette */}
         <div className="fixed inset-0 noir-scanlines pointer-events-none z-30 opacity-40" />
         <div className="fixed inset-0 noir-vignette pointer-events-none z-30" />
