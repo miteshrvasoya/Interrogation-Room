@@ -1,0 +1,28 @@
+{
+  "name": "interrogation-room",
+  "version": "1.0.0",
+  "description": "Interrogation Room - Autonomous AI Mystery Platform in 3D",
+  "main": "server/src/index.js",
+  "scripts": {
+    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"cyan,magenta\" \"npm run server:dev\" \"npm run client:dev\"",
+    "server": "node server/src/index.js",
+    "server:dev": "npm --prefix server run dev",
+    "client": "npm --prefix client start",
+    "client:dev": "npm --prefix client run dev",
+    "validate": "node server/src/engine/Validator.js cases.json",
+    "test:engine": "node server/src/test_engine.js"
+  },
+  "keywords": [
+    "ai",
+    "mystery",
+    "threejs",
+    "agents",
+    "autonomous",
+    "interrogation-room"
+  ],
+  "author": "Interrogation Room Team",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
+}

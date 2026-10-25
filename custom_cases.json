@@ -1,0 +1,2282 @@
+{
+  "format_version": "1.0",
+  "library_ref": "interrogation-room-core",
+  "cases": [
+    {
+      "case_id": "CASE-012",
+      "title": "The Cyber-Vault Poisoning",
+      "tagline": "A biotech billionaire killed in his biometric vault with scrambled access logs.",
+      "version": "1.0.0",
+      "author": "Autonomous Battle Creator",
+      "difficulty": 3,
+      "genre": [
+        "cyberpunk",
+        "locked-room",
+        "poisoning"
+      ],
+      "content_rating": "PG-13",
+      "estimated_rounds": 40,
+      "phase_template": "standard_trial_v1",
+      "setting": {
+        "location": "Vance Manor, Highgate Estate",
+        "date": "Midnight, Autumn Equinox",
+        "atmosphere": "Rain lashing against stained glass windows. Power fluctuating.",
+        "summary": "Darius Thorne was discovered dead under locked-room circumstances. Every associate had a motive and a secret."
+      },
+      "public_briefing": {
+        "opening_report": "At 23:15, Darius Thorne was found unresponsive at The Sub-Level Biometric Vault. Emergency responders confirmed foul play. Court and investigation teams have convened to interrogate suspects and reach a verdict.",
+        "known_fact_ids": [
+          "F-101"
+        ],
+        "initial_leads": [
+          "The victim was threatened over contract disputes and financial irregularities.",
+          "Multiple associates claim ironclad alibis that clash with digital timestamps.",
+          "Forensic evidence suggests deliberate premeditation."
+        ]
+      },
+      "ground_truth": {
+        "crime": {
+          "type": "murder",
+          "victim_id": "CH-101",
+          "time_window": {
+            "start": "22:00",
+            "end": "22:30"
+          },
+          "location_id": "LOC-STUDY",
+          "method": "Cyanide delivered through a modified neuro-inhaler during the automated biometric lockout.",
+          "motive": "Darius discovered the IP breach and scheduled a tribunal revocation for the following morning.",
+          "cause_of_death": "Acute circulatory failure from toxic chemical exposure."
+        },
+        "culprit_ids": [
+          "CH-102"
+        ],
+        "accomplice_ids": [],
+        "true_timeline": [
+          {
+            "id": "TL-101",
+            "time": "21:30-22:00",
+            "actor_ids": [
+              "CH-102"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Dr. Valery Kim entered the premises and deployed the lethal mechanism.",
+            "fact_ids": [
+              "F-101",
+              "F-102"
+            ]
+          },
+          {
+            "id": "TL-102",
+            "time": "22:15",
+            "actor_ids": [
+              "CH-102"
+            ],
+            "location_id": "LOC-ARCHIVE",
+            "event": "Perimeter security check noticed irregular flickering in the security hub.",
+            "fact_ids": [
+              "F-108"
+            ]
+          },
+          {
+            "id": "TL-103",
+            "time": "22:30",
+            "actor_ids": [
+              "CH-101"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Darius Thorne was discovered unresponsive at the crime scene.",
+            "fact_ids": [
+              "F-101"
+            ]
+          }
+        ],
+        "facts": [
+          {
+            "id": "F-101",
+            "statement": "Darius Thorne died of premeditated foul play between 22:00 and 22:30."
+          },
+          {
+            "id": "F-102",
+            "statement": "The lethal act was executed using Cyanide delivered through a modified neuro-inhaler during the automated biometric lockout.."
+          },
+          {
+            "id": "F-103",
+            "statement": "Dr. Valery Kim claimed presence in the greenhouse, but electronic locks contradict this."
+          },
+          {
+            "id": "F-104",
+            "statement": "Cassian Cruz was reviewing trust ledger documents."
+          },
+          {
+            "id": "F-105",
+            "statement": "Lyra Vance was conducting perimeter security checks."
+          },
+          {
+            "id": "F-106",
+            "statement": "Dr. Kim was covertly transferring proprietary genomic patents to an overseas conglomerate."
+          },
+          {
+            "id": "F-107",
+            "statement": "Cassian disabled CCTV sector 3 to conceal an unauthorized meeting with an extortionist."
+          },
+          {
+            "id": "F-108",
+            "statement": "Lyra’s hedge fund was on the verge of liquidation if Thorne Biotics delayed its public offering."
+          }
+        ]
+      },
+      "characters": [
+        {
+          "id": "CH-101",
+          "name": "Darius Thorne",
+          "age": 54,
+          "occupation": "Quantum Biotech Founder",
+          "role_in_case": "victim",
+          "public_profile": "Darius Thorne was found deceased under deeply suspicious circumstances."
+        },
+        {
+          "id": "CH-102",
+          "name": "Dr. Valery Kim",
+          "age": 32,
+          "occupation": "Head of Neural Architecture",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Dr. Valery Kim is a key figure connected to Darius Thorne.",
+          "relationship_to_victim": "Co-Founder & Chief Scientist",
+          "claimed_alibi": "I was in the server cold room running diagnostic regressions on node cluster 4.",
+          "secrets": [
+            {
+              "id": "SEC-101",
+              "text": "Dr. Kim was covertly transferring proprietary genomic patents to an overseas conglomerate.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-101",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was in the server cold room running diagnostic regressions on node cluster 4.",
+              "honesty": "lie",
+              "truth_fact_ids": [
+                "F-103"
+              ],
+              "contradicted_by": [
+                "EV-101"
+              ]
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-103",
+            "F-106"
+          ],
+          "behavior": {
+            "is_culprit": true,
+            "goal": "Evade prosecution and protect secrets.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [
+                "EV-101",
+                "EV-102"
+              ],
+              "effect": "confess",
+              "note": "Confesses when confronted with forensic proof."
+            }
+          }
+        },
+        {
+          "id": "CH-103",
+          "name": "Cassian Cruz",
+          "age": 39,
+          "occupation": "Chief Security Officer",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Cassian Cruz is a key figure connected to Darius Thorne.",
+          "relationship_to_victim": "Former military contractor & bodyguard",
+          "claimed_alibi": "I was verifying perimeter sensors after a brief power dip at 22:10.",
+          "secrets": [
+            {
+              "id": "SEC-102",
+              "text": "Cassian disabled CCTV sector 3 to conceal an unauthorized meeting with an extortionist.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-102",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was verifying perimeter sensors after a brief power dip at 22:10.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-104"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-104",
+            "F-107"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        },
+        {
+          "id": "CH-104",
+          "name": "Lyra Vance",
+          "age": 46,
+          "occupation": "Venture Capital Partner",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Lyra Vance is a key figure connected to Darius Thorne.",
+          "relationship_to_victim": "Lead Investor & Board Member",
+          "claimed_alibi": "I was on a private encrypted conference call with the Singapore investment syndicate.",
+          "secrets": [
+            {
+              "id": "SEC-103",
+              "text": "Lyra’s hedge fund was on the verge of liquidation if Thorne Biotics delayed its public offering.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-103",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was on a private encrypted conference call with the Singapore investment syndicate.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-105"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-105",
+            "F-108"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        }
+      ],
+      "locations": [
+        {
+          "id": "LOC-STUDY",
+          "name": "The Sub-Level Biometric Vault",
+          "description": "The primary scene of the crime where the victim was discovered.",
+          "access": {
+            "requires_warrant": false
+          },
+          "hides": [
+            "EV-101",
+            "EV-102"
+          ]
+        },
+        {
+          "id": "LOC-ARCHIVE",
+          "name": "The Conservatory Archive",
+          "description": "Adjoining chamber containing research records, digital access panels, and lockboxes.",
+          "access": {
+            "requires_warrant": true
+          },
+          "hides": [
+            "EV-103",
+            "EV-104"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "EV-101",
+          "name": "Tampered Neural Filter & Liquid Cyanide",
+          "type": "physical",
+          "description": "Forensic evidence recovered from the primary scene directly refuting the perpetrator’s timeline.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-102"
+          ],
+          "supports_fact_ids": [
+            "F-101",
+            "F-102"
+          ],
+          "reliability": 1,
+          "is_red_herring": false,
+          "significance": "Direct physical link placing the accused at the crime scene during the lethal window.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          },
+          "forensic_result": {
+            "test_type": "spectrometry_and_fingerprint",
+            "finding": "Conclusive fingerprints and chemical reagents matching Dr. Valery Kim.",
+            "result": "Fingerprints and toxic residue match Dr. Valery Kim.",
+            "reveals_fact_ids": [
+              "F-102"
+            ]
+          }
+        },
+        {
+          "id": "EV-102",
+          "name": "Fragmented Security Access Log",
+          "type": "digital",
+          "description": "Electronic reader timestamps recording access cards used between 21:50 and 22:30.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-102"
+          ],
+          "supports_fact_ids": [
+            "F-101"
+          ],
+          "reliability": 0.95,
+          "is_red_herring": false,
+          "significance": "Records electronic door unlock event at 22:04.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-103",
+          "name": "Handwritten Ledger with Altered Figures",
+          "type": "document",
+          "description": "Financial documents recording irregular fund transfers and unfulfilled contracts.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-107"
+          ],
+          "reliability": 0.8,
+          "is_red_herring": true,
+          "significance": "Exposes financial embezzlement, though not the cause of death.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-104",
+          "name": "Disabled Motion Sensor Override Wire",
+          "type": "physical",
+          "description": "A bypassed surveillance relay matching specialized security equipment.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-104"
+          ],
+          "supports_fact_ids": [
+            "F-108"
+          ],
+          "reliability": 0.85,
+          "is_red_herring": true,
+          "significance": "Shows security negligence during the night.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        }
+      ],
+      "roster": {
+        "seats": [
+          {
+            "role": "judge",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "prosecutor",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "defense_lawyer",
+            "min": 1,
+            "max": 4,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "detective",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "police_officer",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "forensic_analyst",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "court_clerk",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-102",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-103",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-104",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          }
+        ]
+      },
+      "solution": {
+        "key_evidence_chain": [
+          {
+            "step": 1,
+            "evidence_ids": [
+              "EV-102"
+            ],
+            "inference": "Places the accused at the crime scene during the lethal window."
+          },
+          {
+            "step": 2,
+            "evidence_ids": [
+              "EV-101"
+            ],
+            "inference": "Conclusively ties the lethal mechanism to the accused."
+          }
+        ],
+        "minimal_solving_path": [
+          "EV-102",
+          "EV-101"
+        ],
+        "red_herrings": [
+          "EV-103",
+          "EV-104"
+        ],
+        "wrong_conclusions": [
+          {
+            "suspect_id": "CH-103",
+            "why_tempting": "Had an argument over corporate trusts and financial ledger irregularities.",
+            "why_wrong": "Access logs and timestamps confirm they were outside the perimeter during the lethal window.",
+            "refuted_by": [
+              "EV-101"
+            ]
+          }
+        ],
+        "solver_check": {
+          "status": "unverified",
+          "min_actions_estimate": 8,
+          "notes": "Direct forensic timeline resolution path."
+        }
+      },
+      "conclusion": {
+        "expected_verdicts": [
+          {
+            "character_id": "CH-102",
+            "verdict": "guilty",
+            "charge": "First-Degree Premeditated Murder"
+          }
+        ],
+        "default_for_unlisted_defendants": "not_guilty",
+        "judge_reasoning_template": "Based on the unrefuted forensic chain of custody for Exhibit [Altered Digital Keycard & Toxic Residue] and shattered timeline alibis, this court finds Dr. Valery Kim GUILTY as charged.",
+        "reveal_narration": "The puzzle unravels: Dr. Valery Kim planned the crime to avoid financial ruin, planting misdirection across the estate. But the forensic spectrometer and digital access logs left an unbroken path straight to the truth.",
+        "epilogue": "With the verdict delivered, Darius Thorne’s estate begins recovery, and justice is served in the Autonomous Courtroom."
+      },
+      "is_custom": true
+    },
+    {
+      "case_id": "CASE-013",
+      "title": "The Blackwood Masquerade Mystery",
+      "tagline": "An eccentric antiquarian poisoned during an autumn masquerade gala behind closed doors.",
+      "version": "1.0.0",
+      "author": "Autonomous Battle Creator",
+      "difficulty": 2,
+      "genre": [
+        "vintage-noir",
+        "locked-room",
+        "conspiracy"
+      ],
+      "content_rating": "PG-13",
+      "estimated_rounds": 40,
+      "phase_template": "standard_trial_v1",
+      "setting": {
+        "location": "Vance Manor, Highgate Estate",
+        "date": "Midnight, Autumn Equinox",
+        "atmosphere": "Rain lashing against stained glass windows. Power fluctuating.",
+        "summary": "Lord Arthur Blackwood was discovered dead under locked-room circumstances. Every associate had a motive and a secret."
+      },
+      "public_briefing": {
+        "opening_report": "At 23:15, Lord Arthur Blackwood was found unresponsive at The East Wing Gallery. Emergency responders confirmed foul play. Court and investigation teams have convened to interrogate suspects and reach a verdict.",
+        "known_fact_ids": [
+          "F-101"
+        ],
+        "initial_leads": [
+          "The victim was threatened over contract disputes and financial irregularities.",
+          "Multiple associates claim ironclad alibis that clash with digital timestamps.",
+          "Forensic evidence suggests deliberate premeditation."
+        ]
+      },
+      "ground_truth": {
+        "crime": {
+          "type": "murder",
+          "victim_id": "CH-101",
+          "time_window": {
+            "start": "22:00",
+            "end": "22:30"
+          },
+          "location_id": "LOC-STUDY",
+          "method": "Rare belladonna extract dropped into the private toast flute.",
+          "motive": "Arthur ordered an independent British Museum audit that would reveal the fraudulent copies.",
+          "cause_of_death": "Acute circulatory failure from toxic chemical exposure."
+        },
+        "culprit_ids": [
+          "CH-103"
+        ],
+        "accomplice_ids": [],
+        "true_timeline": [
+          {
+            "id": "TL-101",
+            "time": "21:30-22:00",
+            "actor_ids": [
+              "CH-103"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Mortimer Graves entered the premises and deployed the lethal mechanism.",
+            "fact_ids": [
+              "F-101",
+              "F-102"
+            ]
+          },
+          {
+            "id": "TL-102",
+            "time": "22:15",
+            "actor_ids": [
+              "CH-102"
+            ],
+            "location_id": "LOC-ARCHIVE",
+            "event": "Perimeter security check noticed irregular flickering in the security hub.",
+            "fact_ids": [
+              "F-108"
+            ]
+          },
+          {
+            "id": "TL-103",
+            "time": "22:30",
+            "actor_ids": [
+              "CH-101"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Lord Arthur Blackwood was discovered unresponsive at the crime scene.",
+            "fact_ids": [
+              "F-101"
+            ]
+          }
+        ],
+        "facts": [
+          {
+            "id": "F-101",
+            "statement": "Lord Arthur Blackwood died of premeditated foul play between 22:00 and 22:30."
+          },
+          {
+            "id": "F-102",
+            "statement": "The lethal act was executed using Rare belladonna extract dropped into the private toast flute.."
+          },
+          {
+            "id": "F-103",
+            "statement": "Lady Genevieve Sterling claimed presence in the greenhouse, but electronic locks contradict this."
+          },
+          {
+            "id": "F-104",
+            "statement": "Mortimer Graves was reviewing trust ledger documents."
+          },
+          {
+            "id": "F-105",
+            "statement": "Dr. Sebastian Drake was conducting perimeter security checks."
+          },
+          {
+            "id": "F-106",
+            "statement": "Genevieve was deeply in debt to high-stakes gaming houses and forged Arthur’s signature."
+          },
+          {
+            "id": "F-107",
+            "statement": "Mortimer had been systematically replacing authentic Renaissance relics with master forgeries."
+          },
+          {
+            "id": "F-108",
+            "statement": "Prescribed experimental digitalis compounds beyond regulated dosages."
+          }
+        ]
+      },
+      "characters": [
+        {
+          "id": "CH-101",
+          "name": "Lord Arthur Blackwood",
+          "age": 54,
+          "occupation": "Antiquarian & Collector",
+          "role_in_case": "victim",
+          "public_profile": "Lord Arthur Blackwood was found deceased under deeply suspicious circumstances."
+        },
+        {
+          "id": "CH-102",
+          "name": "Lady Genevieve Sterling",
+          "age": 32,
+          "occupation": "Society Hostess & Beneficiary",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Lady Genevieve Sterling is a key figure connected to Lord Arthur Blackwood.",
+          "relationship_to_victim": "Estranged half-sister",
+          "claimed_alibi": "I was dancing in the main ballroom in plain sight of fifty guests.",
+          "secrets": [
+            {
+              "id": "SEC-101",
+              "text": "Genevieve was deeply in debt to high-stakes gaming houses and forged Arthur’s signature.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-101",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was dancing in the main ballroom in plain sight of fifty guests.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-103"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-103",
+            "F-106"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        },
+        {
+          "id": "CH-103",
+          "name": "Mortimer Graves",
+          "age": 39,
+          "occupation": "Private Curator",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Mortimer Graves is a key figure connected to Lord Arthur Blackwood.",
+          "relationship_to_victim": "Estate archivist",
+          "claimed_alibi": "I was in the basement vaults cataloging rare Mesopotamian artifacts.",
+          "secrets": [
+            {
+              "id": "SEC-102",
+              "text": "Mortimer had been systematically replacing authentic Renaissance relics with master forgeries.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-102",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was in the basement vaults cataloging rare Mesopotamian artifacts.",
+              "honesty": "lie",
+              "truth_fact_ids": [
+                "F-104"
+              ],
+              "contradicted_by": [
+                "EV-101"
+              ]
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-104",
+            "F-107"
+          ],
+          "behavior": {
+            "is_culprit": true,
+            "goal": "Evade prosecution and protect secrets.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [
+                "EV-101",
+                "EV-102"
+              ],
+              "effect": "confess",
+              "note": "Confesses when confronted with forensic proof."
+            }
+          }
+        },
+        {
+          "id": "CH-104",
+          "name": "Dr. Sebastian Drake",
+          "age": 46,
+          "occupation": "Personal Physician",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Dr. Sebastian Drake is a key figure connected to Lord Arthur Blackwood.",
+          "relationship_to_victim": "Family doctor",
+          "claimed_alibi": "I was resting in the smoking parlor after attending to an earlier guest fainting spell.",
+          "secrets": [
+            {
+              "id": "SEC-103",
+              "text": "Prescribed experimental digitalis compounds beyond regulated dosages.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-103",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was resting in the smoking parlor after attending to an earlier guest fainting spell.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-105"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-105",
+            "F-108"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        }
+      ],
+      "locations": [
+        {
+          "id": "LOC-STUDY",
+          "name": "The East Wing Gallery",
+          "description": "The primary scene of the crime where the victim was discovered.",
+          "access": {
+            "requires_warrant": false
+          },
+          "hides": [
+            "EV-101",
+            "EV-102"
+          ]
+        },
+        {
+          "id": "LOC-ARCHIVE",
+          "name": "The Conservatory Archive",
+          "description": "Adjoining chamber containing research records, digital access panels, and lockboxes.",
+          "access": {
+            "requires_warrant": true
+          },
+          "hides": [
+            "EV-103",
+            "EV-104"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "EV-101",
+          "name": "Venom-Laced Champagne Flute",
+          "type": "physical",
+          "description": "Forensic evidence recovered from the primary scene directly refuting the perpetrator’s timeline.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-101",
+            "F-102"
+          ],
+          "reliability": 1,
+          "is_red_herring": false,
+          "significance": "Direct physical link placing the accused at the crime scene during the lethal window.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          },
+          "forensic_result": {
+            "test_type": "spectrometry_and_fingerprint",
+            "finding": "Conclusive fingerprints and chemical reagents matching Mortimer Graves.",
+            "result": "Fingerprints and toxic residue match Mortimer Graves.",
+            "reveals_fact_ids": [
+              "F-102"
+            ]
+          }
+        },
+        {
+          "id": "EV-102",
+          "name": "Fragmented Security Access Log",
+          "type": "digital",
+          "description": "Electronic reader timestamps recording access cards used between 21:50 and 22:30.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-101"
+          ],
+          "reliability": 0.95,
+          "is_red_herring": false,
+          "significance": "Records electronic door unlock event at 22:04.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-103",
+          "name": "Handwritten Ledger with Altered Figures",
+          "type": "document",
+          "description": "Financial documents recording irregular fund transfers and unfulfilled contracts.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-107"
+          ],
+          "reliability": 0.8,
+          "is_red_herring": true,
+          "significance": "Exposes financial embezzlement, though not the cause of death.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-104",
+          "name": "Disabled Motion Sensor Override Wire",
+          "type": "physical",
+          "description": "A bypassed surveillance relay matching specialized security equipment.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-104"
+          ],
+          "supports_fact_ids": [
+            "F-108"
+          ],
+          "reliability": 0.85,
+          "is_red_herring": true,
+          "significance": "Shows security negligence during the night.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        }
+      ],
+      "roster": {
+        "seats": [
+          {
+            "role": "judge",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "prosecutor",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "defense_lawyer",
+            "min": 1,
+            "max": 4,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "detective",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "police_officer",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "forensic_analyst",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "court_clerk",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-102",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-103",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-104",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          }
+        ]
+      },
+      "solution": {
+        "key_evidence_chain": [
+          {
+            "step": 1,
+            "evidence_ids": [
+              "EV-102"
+            ],
+            "inference": "Places the accused at the crime scene during the lethal window."
+          },
+          {
+            "step": 2,
+            "evidence_ids": [
+              "EV-101"
+            ],
+            "inference": "Conclusively ties the lethal mechanism to the accused."
+          }
+        ],
+        "minimal_solving_path": [
+          "EV-102",
+          "EV-101"
+        ],
+        "red_herrings": [
+          "EV-103",
+          "EV-104"
+        ],
+        "wrong_conclusions": [
+          {
+            "suspect_id": "CH-103",
+            "why_tempting": "Had an argument over corporate trusts and financial ledger irregularities.",
+            "why_wrong": "Access logs and timestamps confirm they were outside the perimeter during the lethal window.",
+            "refuted_by": [
+              "EV-101"
+            ]
+          }
+        ],
+        "solver_check": {
+          "status": "unverified",
+          "min_actions_estimate": 8,
+          "notes": "Direct forensic timeline resolution path."
+        }
+      },
+      "conclusion": {
+        "expected_verdicts": [
+          {
+            "character_id": "CH-103",
+            "verdict": "guilty",
+            "charge": "First-Degree Premeditated Murder"
+          }
+        ],
+        "default_for_unlisted_defendants": "not_guilty",
+        "judge_reasoning_template": "Based on the unrefuted forensic chain of custody for Exhibit [Altered Digital Keycard & Toxic Residue] and shattered timeline alibis, this court finds Mortimer Graves GUILTY as charged.",
+        "reveal_narration": "The puzzle unravels: Mortimer Graves planned the crime to avoid financial ruin, planting misdirection across the estate. But the forensic spectrometer and digital access logs left an unbroken path straight to the truth.",
+        "epilogue": "With the verdict delivered, Lord Arthur Blackwood’s estate begins recovery, and justice is served in the Autonomous Courtroom."
+      },
+      "is_custom": true
+    },
+    {
+      "case_id": "CASE-014",
+      "title": "The Cyber-Vault Poisoning",
+      "tagline": "A biotech billionaire killed in his biometric vault with scrambled access logs.",
+      "version": "1.0.0",
+      "author": "Autonomous Battle Creator",
+      "difficulty": 3,
+      "genre": [
+        "cyberpunk",
+        "locked-room",
+        "poisoning"
+      ],
+      "content_rating": "PG-13",
+      "estimated_rounds": 40,
+      "phase_template": "standard_trial_v1",
+      "setting": {
+        "location": "Vance Manor, Highgate Estate",
+        "date": "Midnight, Autumn Equinox",
+        "atmosphere": "Rain lashing against stained glass windows. Power fluctuating.",
+        "summary": "Darius Thorne was discovered dead under locked-room circumstances. Every associate had a motive and a secret."
+      },
+      "public_briefing": {
+        "opening_report": "At 23:15, Darius Thorne was found unresponsive at The Sub-Level Biometric Vault. Emergency responders confirmed foul play. Court and investigation teams have convened to interrogate suspects and reach a verdict.",
+        "known_fact_ids": [
+          "F-101"
+        ],
+        "initial_leads": [
+          "The victim was threatened over contract disputes and financial irregularities.",
+          "Multiple associates claim ironclad alibis that clash with digital timestamps.",
+          "Forensic evidence suggests deliberate premeditation."
+        ]
+      },
+      "ground_truth": {
+        "crime": {
+          "type": "murder",
+          "victim_id": "CH-101",
+          "time_window": {
+            "start": "22:00",
+            "end": "22:30"
+          },
+          "location_id": "LOC-STUDY",
+          "method": "Cyanide delivered through a modified neuro-inhaler during the automated biometric lockout.",
+          "motive": "Darius discovered the IP breach and scheduled a tribunal revocation for the following morning.",
+          "cause_of_death": "Acute circulatory failure from toxic chemical exposure."
+        },
+        "culprit_ids": [
+          "CH-102"
+        ],
+        "accomplice_ids": [],
+        "true_timeline": [
+          {
+            "id": "TL-101",
+            "time": "21:30-22:00",
+            "actor_ids": [
+              "CH-102"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Dr. Valery Kim entered the premises and deployed the lethal mechanism.",
+            "fact_ids": [
+              "F-101",
+              "F-102"
+            ]
+          },
+          {
+            "id": "TL-102",
+            "time": "22:15",
+            "actor_ids": [
+              "CH-102"
+            ],
+            "location_id": "LOC-ARCHIVE",
+            "event": "Perimeter security check noticed irregular flickering in the security hub.",
+            "fact_ids": [
+              "F-108"
+            ]
+          },
+          {
+            "id": "TL-103",
+            "time": "22:30",
+            "actor_ids": [
+              "CH-101"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Darius Thorne was discovered unresponsive at the crime scene.",
+            "fact_ids": [
+              "F-101"
+            ]
+          }
+        ],
+        "facts": [
+          {
+            "id": "F-101",
+            "statement": "Darius Thorne died of premeditated foul play between 22:00 and 22:30."
+          },
+          {
+            "id": "F-102",
+            "statement": "The lethal act was executed using Cyanide delivered through a modified neuro-inhaler during the automated biometric lockout.."
+          },
+          {
+            "id": "F-103",
+            "statement": "Dr. Valery Kim claimed presence in the greenhouse, but electronic locks contradict this."
+          },
+          {
+            "id": "F-104",
+            "statement": "Cassian Cruz was reviewing trust ledger documents."
+          },
+          {
+            "id": "F-105",
+            "statement": "Lyra Vance was conducting perimeter security checks."
+          },
+          {
+            "id": "F-106",
+            "statement": "Dr. Kim was covertly transferring proprietary genomic patents to an overseas conglomerate."
+          },
+          {
+            "id": "F-107",
+            "statement": "Cassian disabled CCTV sector 3 to conceal an unauthorized meeting with an extortionist."
+          },
+          {
+            "id": "F-108",
+            "statement": "Lyra’s hedge fund was on the verge of liquidation if Thorne Biotics delayed its public offering."
+          }
+        ]
+      },
+      "characters": [
+        {
+          "id": "CH-101",
+          "name": "Darius Thorne",
+          "age": 54,
+          "occupation": "Quantum Biotech Founder",
+          "role_in_case": "victim",
+          "public_profile": "Darius Thorne was found deceased under deeply suspicious circumstances."
+        },
+        {
+          "id": "CH-102",
+          "name": "Dr. Valery Kim",
+          "age": 32,
+          "occupation": "Head of Neural Architecture",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Dr. Valery Kim is a key figure connected to Darius Thorne.",
+          "relationship_to_victim": "Co-Founder & Chief Scientist",
+          "claimed_alibi": "I was in the server cold room running diagnostic regressions on node cluster 4.",
+          "secrets": [
+            {
+              "id": "SEC-101",
+              "text": "Dr. Kim was covertly transferring proprietary genomic patents to an overseas conglomerate.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-101",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was in the server cold room running diagnostic regressions on node cluster 4.",
+              "honesty": "lie",
+              "truth_fact_ids": [
+                "F-103"
+              ],
+              "contradicted_by": [
+                "EV-101"
+              ]
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-103",
+            "F-106"
+          ],
+          "behavior": {
+            "is_culprit": true,
+            "goal": "Evade prosecution and protect secrets.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [
+                "EV-101",
+                "EV-102"
+              ],
+              "effect": "confess",
+              "note": "Confesses when confronted with forensic proof."
+            }
+          }
+        },
+        {
+          "id": "CH-103",
+          "name": "Cassian Cruz",
+          "age": 39,
+          "occupation": "Chief Security Officer",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Cassian Cruz is a key figure connected to Darius Thorne.",
+          "relationship_to_victim": "Former military contractor & bodyguard",
+          "claimed_alibi": "I was verifying perimeter sensors after a brief power dip at 22:10.",
+          "secrets": [
+            {
+              "id": "SEC-102",
+              "text": "Cassian disabled CCTV sector 3 to conceal an unauthorized meeting with an extortionist.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-102",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was verifying perimeter sensors after a brief power dip at 22:10.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-104"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-104",
+            "F-107"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        },
+        {
+          "id": "CH-104",
+          "name": "Lyra Vance",
+          "age": 46,
+          "occupation": "Venture Capital Partner",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Lyra Vance is a key figure connected to Darius Thorne.",
+          "relationship_to_victim": "Lead Investor & Board Member",
+          "claimed_alibi": "I was on a private encrypted conference call with the Singapore investment syndicate.",
+          "secrets": [
+            {
+              "id": "SEC-103",
+              "text": "Lyra’s hedge fund was on the verge of liquidation if Thorne Biotics delayed its public offering.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-103",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was on a private encrypted conference call with the Singapore investment syndicate.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-105"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-105",
+            "F-108"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        }
+      ],
+      "locations": [
+        {
+          "id": "LOC-STUDY",
+          "name": "The Sub-Level Biometric Vault",
+          "description": "The primary scene of the crime where the victim was discovered.",
+          "access": {
+            "requires_warrant": false
+          },
+          "hides": [
+            "EV-101",
+            "EV-102"
+          ]
+        },
+        {
+          "id": "LOC-ARCHIVE",
+          "name": "The Conservatory Archive",
+          "description": "Adjoining chamber containing research records, digital access panels, and lockboxes.",
+          "access": {
+            "requires_warrant": true
+          },
+          "hides": [
+            "EV-103",
+            "EV-104"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "EV-101",
+          "name": "Tampered Neural Filter & Liquid Cyanide",
+          "type": "physical",
+          "description": "Forensic evidence recovered from the primary scene directly refuting the perpetrator’s timeline.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-102"
+          ],
+          "supports_fact_ids": [
+            "F-101",
+            "F-102"
+          ],
+          "reliability": 1,
+          "is_red_herring": false,
+          "significance": "Direct physical link placing the accused at the crime scene during the lethal window.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          },
+          "forensic_result": {
+            "test_type": "spectrometry_and_fingerprint",
+            "finding": "Conclusive fingerprints and chemical reagents matching Dr. Valery Kim.",
+            "result": "Fingerprints and toxic residue match Dr. Valery Kim.",
+            "reveals_fact_ids": [
+              "F-102"
+            ]
+          }
+        },
+        {
+          "id": "EV-102",
+          "name": "Fragmented Security Access Log",
+          "type": "digital",
+          "description": "Electronic reader timestamps recording access cards used between 21:50 and 22:30.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-102"
+          ],
+          "supports_fact_ids": [
+            "F-101"
+          ],
+          "reliability": 0.95,
+          "is_red_herring": false,
+          "significance": "Records electronic door unlock event at 22:04.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-103",
+          "name": "Handwritten Ledger with Altered Figures",
+          "type": "document",
+          "description": "Financial documents recording irregular fund transfers and unfulfilled contracts.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-107"
+          ],
+          "reliability": 0.8,
+          "is_red_herring": true,
+          "significance": "Exposes financial embezzlement, though not the cause of death.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-104",
+          "name": "Disabled Motion Sensor Override Wire",
+          "type": "physical",
+          "description": "A bypassed surveillance relay matching specialized security equipment.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-104"
+          ],
+          "supports_fact_ids": [
+            "F-108"
+          ],
+          "reliability": 0.85,
+          "is_red_herring": true,
+          "significance": "Shows security negligence during the night.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        }
+      ],
+      "roster": {
+        "seats": [
+          {
+            "role": "judge",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "prosecutor",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "defense_lawyer",
+            "min": 1,
+            "max": 4,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "detective",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "police_officer",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "forensic_analyst",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "court_clerk",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-102",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-103",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-104",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          }
+        ]
+      },
+      "solution": {
+        "key_evidence_chain": [
+          {
+            "step": 1,
+            "evidence_ids": [
+              "EV-102"
+            ],
+            "inference": "Places the accused at the crime scene during the lethal window."
+          },
+          {
+            "step": 2,
+            "evidence_ids": [
+              "EV-101"
+            ],
+            "inference": "Conclusively ties the lethal mechanism to the accused."
+          }
+        ],
+        "minimal_solving_path": [
+          "EV-102",
+          "EV-101"
+        ],
+        "red_herrings": [
+          "EV-103",
+          "EV-104"
+        ],
+        "wrong_conclusions": [
+          {
+            "suspect_id": "CH-103",
+            "why_tempting": "Had an argument over corporate trusts and financial ledger irregularities.",
+            "why_wrong": "Access logs and timestamps confirm they were outside the perimeter during the lethal window.",
+            "refuted_by": [
+              "EV-101"
+            ]
+          }
+        ],
+        "solver_check": {
+          "status": "unverified",
+          "min_actions_estimate": 8,
+          "notes": "Direct forensic timeline resolution path."
+        }
+      },
+      "conclusion": {
+        "expected_verdicts": [
+          {
+            "character_id": "CH-102",
+            "verdict": "guilty",
+            "charge": "First-Degree Premeditated Murder"
+          }
+        ],
+        "default_for_unlisted_defendants": "not_guilty",
+        "judge_reasoning_template": "Based on the unrefuted forensic chain of custody for Exhibit [Altered Digital Keycard & Toxic Residue] and shattered timeline alibis, this court finds Dr. Valery Kim GUILTY as charged.",
+        "reveal_narration": "The puzzle unravels: Dr. Valery Kim planned the crime to avoid financial ruin, planting misdirection across the estate. But the forensic spectrometer and digital access logs left an unbroken path straight to the truth.",
+        "epilogue": "With the verdict delivered, Darius Thorne’s estate begins recovery, and justice is served in the Autonomous Courtroom."
+      },
+      "is_custom": true
+    },
+    {
+      "case_id": "CASE-015",
+      "title": "The Blackwood Masquerade Mystery",
+      "tagline": "An eccentric antiquarian poisoned during an autumn masquerade gala behind closed doors.",
+      "version": "1.0.0",
+      "author": "Autonomous Battle Creator",
+      "difficulty": 2,
+      "genre": [
+        "vintage-noir",
+        "locked-room",
+        "conspiracy"
+      ],
+      "content_rating": "PG-13",
+      "estimated_rounds": 40,
+      "phase_template": "standard_trial_v1",
+      "setting": {
+        "location": "Vance Manor, Highgate Estate",
+        "date": "Midnight, Autumn Equinox",
+        "atmosphere": "Rain lashing against stained glass windows. Power fluctuating.",
+        "summary": "Lord Arthur Blackwood was discovered dead under locked-room circumstances. Every associate had a motive and a secret."
+      },
+      "public_briefing": {
+        "opening_report": "At 23:15, Lord Arthur Blackwood was found unresponsive at The East Wing Gallery. Emergency responders confirmed foul play. Court and investigation teams have convened to interrogate suspects and reach a verdict.",
+        "known_fact_ids": [
+          "F-101"
+        ],
+        "initial_leads": [
+          "The victim was threatened over contract disputes and financial irregularities.",
+          "Multiple associates claim ironclad alibis that clash with digital timestamps.",
+          "Forensic evidence suggests deliberate premeditation."
+        ]
+      },
+      "ground_truth": {
+        "crime": {
+          "type": "murder",
+          "victim_id": "CH-101",
+          "time_window": {
+            "start": "22:00",
+            "end": "22:30"
+          },
+          "location_id": "LOC-STUDY",
+          "method": "Rare belladonna extract dropped into the private toast flute.",
+          "motive": "Arthur ordered an independent British Museum audit that would reveal the fraudulent copies.",
+          "cause_of_death": "Acute circulatory failure from toxic chemical exposure."
+        },
+        "culprit_ids": [
+          "CH-103"
+        ],
+        "accomplice_ids": [],
+        "true_timeline": [
+          {
+            "id": "TL-101",
+            "time": "21:30-22:00",
+            "actor_ids": [
+              "CH-103"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Mortimer Graves entered the premises and deployed the lethal mechanism.",
+            "fact_ids": [
+              "F-101",
+              "F-102"
+            ]
+          },
+          {
+            "id": "TL-102",
+            "time": "22:15",
+            "actor_ids": [
+              "CH-102"
+            ],
+            "location_id": "LOC-ARCHIVE",
+            "event": "Perimeter security check noticed irregular flickering in the security hub.",
+            "fact_ids": [
+              "F-108"
+            ]
+          },
+          {
+            "id": "TL-103",
+            "time": "22:30",
+            "actor_ids": [
+              "CH-101"
+            ],
+            "location_id": "LOC-STUDY",
+            "event": "Lord Arthur Blackwood was discovered unresponsive at the crime scene.",
+            "fact_ids": [
+              "F-101"
+            ]
+          }
+        ],
+        "facts": [
+          {
+            "id": "F-101",
+            "statement": "Lord Arthur Blackwood died of premeditated foul play between 22:00 and 22:30."
+          },
+          {
+            "id": "F-102",
+            "statement": "The lethal act was executed using Rare belladonna extract dropped into the private toast flute.."
+          },
+          {
+            "id": "F-103",
+            "statement": "Lady Genevieve Sterling claimed presence in the greenhouse, but electronic locks contradict this."
+          },
+          {
+            "id": "F-104",
+            "statement": "Mortimer Graves was reviewing trust ledger documents."
+          },
+          {
+            "id": "F-105",
+            "statement": "Dr. Sebastian Drake was conducting perimeter security checks."
+          },
+          {
+            "id": "F-106",
+            "statement": "Genevieve was deeply in debt to high-stakes gaming houses and forged Arthur’s signature."
+          },
+          {
+            "id": "F-107",
+            "statement": "Mortimer had been systematically replacing authentic Renaissance relics with master forgeries."
+          },
+          {
+            "id": "F-108",
+            "statement": "Prescribed experimental digitalis compounds beyond regulated dosages."
+          }
+        ]
+      },
+      "characters": [
+        {
+          "id": "CH-101",
+          "name": "Lord Arthur Blackwood",
+          "age": 54,
+          "occupation": "Antiquarian & Collector",
+          "role_in_case": "victim",
+          "public_profile": "Lord Arthur Blackwood was found deceased under deeply suspicious circumstances."
+        },
+        {
+          "id": "CH-102",
+          "name": "Lady Genevieve Sterling",
+          "age": 32,
+          "occupation": "Society Hostess & Beneficiary",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Lady Genevieve Sterling is a key figure connected to Lord Arthur Blackwood.",
+          "relationship_to_victim": "Estranged half-sister",
+          "claimed_alibi": "I was dancing in the main ballroom in plain sight of fifty guests.",
+          "secrets": [
+            {
+              "id": "SEC-101",
+              "text": "Genevieve was deeply in debt to high-stakes gaming houses and forged Arthur’s signature.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-101",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was dancing in the main ballroom in plain sight of fifty guests.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-103"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-103",
+            "F-106"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        },
+        {
+          "id": "CH-103",
+          "name": "Mortimer Graves",
+          "age": 39,
+          "occupation": "Private Curator",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Mortimer Graves is a key figure connected to Lord Arthur Blackwood.",
+          "relationship_to_victim": "Estate archivist",
+          "claimed_alibi": "I was in the basement vaults cataloging rare Mesopotamian artifacts.",
+          "secrets": [
+            {
+              "id": "SEC-102",
+              "text": "Mortimer had been systematically replacing authentic Renaissance relics with master forgeries.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-102",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was in the basement vaults cataloging rare Mesopotamian artifacts.",
+              "honesty": "lie",
+              "truth_fact_ids": [
+                "F-104"
+              ],
+              "contradicted_by": [
+                "EV-101"
+              ]
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-104",
+            "F-107"
+          ],
+          "behavior": {
+            "is_culprit": true,
+            "goal": "Evade prosecution and protect secrets.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [
+                "EV-101",
+                "EV-102"
+              ],
+              "effect": "confess",
+              "note": "Confesses when confronted with forensic proof."
+            }
+          }
+        },
+        {
+          "id": "CH-104",
+          "name": "Dr. Sebastian Drake",
+          "age": 46,
+          "occupation": "Personal Physician",
+          "role_in_case": "suspect",
+          "seat_role": "suspect",
+          "public_profile": "Dr. Sebastian Drake is a key figure connected to Lord Arthur Blackwood.",
+          "relationship_to_victim": "Family doctor",
+          "claimed_alibi": "I was resting in the smoking parlor after attending to an earlier guest fainting spell.",
+          "secrets": [
+            {
+              "id": "SEC-103",
+              "text": "Prescribed experimental digitalis compounds beyond regulated dosages.",
+              "reveal_policy": {
+                "mode": "on_evidence",
+                "requires_evidence": [
+                  "EV-102"
+                ]
+              }
+            }
+          ],
+          "testimony": [
+            {
+              "id": "TS-103",
+              "topic": "whereabouts_evening",
+              "keywords": [
+                "whereabouts",
+                "alibi",
+                "evening",
+                "timeline",
+                "door"
+              ],
+              "told_answer": "I was resting in the smoking parlor after attending to an earlier guest fainting spell.",
+              "honesty": "truthful",
+              "truth_fact_ids": [
+                "F-105"
+              ],
+              "contradicted_by": []
+            }
+          ],
+          "private_knowledge": [
+            "F-101",
+            "F-105",
+            "F-108"
+          ],
+          "behavior": {
+            "is_culprit": false,
+            "goal": "Prove innocence under oath.",
+            "breaking_point": {
+              "min_exposed_contradictions": 2,
+              "or_all_evidence": [],
+              "effect": "break_down",
+              "note": "Breaks down in tears."
+            }
+          }
+        }
+      ],
+      "locations": [
+        {
+          "id": "LOC-STUDY",
+          "name": "The East Wing Gallery",
+          "description": "The primary scene of the crime where the victim was discovered.",
+          "access": {
+            "requires_warrant": false
+          },
+          "hides": [
+            "EV-101",
+            "EV-102"
+          ]
+        },
+        {
+          "id": "LOC-ARCHIVE",
+          "name": "The Conservatory Archive",
+          "description": "Adjoining chamber containing research records, digital access panels, and lockboxes.",
+          "access": {
+            "requires_warrant": true
+          },
+          "hides": [
+            "EV-103",
+            "EV-104"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "id": "EV-101",
+          "name": "Venom-Laced Champagne Flute",
+          "type": "physical",
+          "description": "Forensic evidence recovered from the primary scene directly refuting the perpetrator’s timeline.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-101",
+            "F-102"
+          ],
+          "reliability": 1,
+          "is_red_herring": false,
+          "significance": "Direct physical link placing the accused at the crime scene during the lethal window.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          },
+          "forensic_result": {
+            "test_type": "spectrometry_and_fingerprint",
+            "finding": "Conclusive fingerprints and chemical reagents matching Mortimer Graves.",
+            "result": "Fingerprints and toxic residue match Mortimer Graves.",
+            "reveals_fact_ids": [
+              "F-102"
+            ]
+          }
+        },
+        {
+          "id": "EV-102",
+          "name": "Fragmented Security Access Log",
+          "type": "digital",
+          "description": "Electronic reader timestamps recording access cards used between 21:50 and 22:30.",
+          "location_id": "LOC-STUDY",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-101"
+          ],
+          "reliability": 0.95,
+          "is_red_herring": false,
+          "significance": "Records electronic door unlock event at 22:04.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": false,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-103",
+          "name": "Handwritten Ledger with Altered Figures",
+          "type": "document",
+          "description": "Financial documents recording irregular fund transfers and unfulfilled contracts.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-103"
+          ],
+          "supports_fact_ids": [
+            "F-107"
+          ],
+          "reliability": 0.8,
+          "is_red_herring": true,
+          "significance": "Exposes financial embezzlement, though not the cause of death.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        },
+        {
+          "id": "EV-104",
+          "name": "Disabled Motion Sensor Override Wire",
+          "type": "physical",
+          "description": "A bypassed surveillance relay matching specialized security equipment.",
+          "location_id": "LOC-ARCHIVE",
+          "points_to": [
+            "CH-104"
+          ],
+          "supports_fact_ids": [
+            "F-108"
+          ],
+          "reliability": 0.85,
+          "is_red_herring": true,
+          "significance": "Shows security negligence during the night.",
+          "discovery": {
+            "method": "search_location",
+            "requires_evidence": [],
+            "requires_warrant": true,
+            "actor_roles": [
+              "detective",
+              "police_officer"
+            ]
+          }
+        }
+      ],
+      "roster": {
+        "seats": [
+          {
+            "role": "judge",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "prosecutor",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "defense_lawyer",
+            "min": 1,
+            "max": 4,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "detective",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "police_officer",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "forensic_analyst",
+            "min": 0,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "court_clerk",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-102",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-103",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          },
+          {
+            "role": "suspect",
+            "character_id": "CH-104",
+            "min": 1,
+            "max": 1,
+            "initial_fill": "house_bot"
+          }
+        ]
+      },
+      "solution": {
+        "key_evidence_chain": [
+          {
+            "step": 1,
+            "evidence_ids": [
+              "EV-102"
+            ],
+            "inference": "Places the accused at the crime scene during the lethal window."
+          },
+          {
+            "step": 2,
+            "evidence_ids": [
+              "EV-101"
+            ],
+            "inference": "Conclusively ties the lethal mechanism to the accused."
+          }
+        ],
+        "minimal_solving_path": [
+          "EV-102",
+          "EV-101"
+        ],
+        "red_herrings": [
+          "EV-103",
+          "EV-104"
+        ],
+        "wrong_conclusions": [
+          {
+            "suspect_id": "CH-103",
+            "why_tempting": "Had an argument over corporate trusts and financial ledger irregularities.",
+            "why_wrong": "Access logs and timestamps confirm they were outside the perimeter during the lethal window.",
+            "refuted_by": [
+              "EV-101"
+            ]
+          }
+        ],
+        "solver_check": {
+          "status": "unverified",
+          "min_actions_estimate": 8,
+          "notes": "Direct forensic timeline resolution path."
+        }
+      },
+      "conclusion": {
+        "expected_verdicts": [
+          {
+            "character_id": "CH-103",
+            "verdict": "guilty",
+            "charge": "First-Degree Premeditated Murder"
+          }
+        ],
+        "default_for_unlisted_defendants": "not_guilty",
+        "judge_reasoning_template": "Based on the unrefuted forensic chain of custody for Exhibit [Altered Digital Keycard & Toxic Residue] and shattered timeline alibis, this court finds Mortimer Graves GUILTY as charged.",
+        "reveal_narration": "The puzzle unravels: Mortimer Graves planned the crime to avoid financial ruin, planting misdirection across the estate. But the forensic spectrometer and digital access logs left an unbroken path straight to the truth.",
+        "epilogue": "With the verdict delivered, Lord Arthur Blackwood’s estate begins recovery, and justice is served in the Autonomous Courtroom."
+      },
+      "is_custom": true
+    }
+  ]
+}
